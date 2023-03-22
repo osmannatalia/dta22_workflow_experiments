@@ -12,29 +12,16 @@ jobs:
       - run: npm install -g bats
       - run: bats -v
 
-  example-job:
+  web-deploy:
+    name: 🎉 Deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Retrieve secret
-        env:
-          super_secret: ${{ secrets.SUPERSECRET }}
-        run: |
-          example-command "$super_secret
-
-  setup:
-    runs-on: ubuntu-latest
-    steps:
-      - run: ./setup_server.sh
-  build:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - run: ./build_server.sh
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - run: ./test_server.sh
-
-
-      
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v3
+    
+    - name: 📂 Sync files
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ftp.samkirkland.com
+        username: myFtpUserName
+        password: ${{ secrets.ftp_password }}
